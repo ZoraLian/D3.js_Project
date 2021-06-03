@@ -1,9 +1,9 @@
-destination,vol,people ,long,lat,longdest,latdest ,longoff,latoff
+destination,vol,people,long,lat,longdest,latdest,longoff,latoff
 India,1,15885657,77.2,28.6,77.2,28.6,0,0
 United Arab Emirates,0.200435084,3184043,77.2,28.6,54.3,24.4,-30,8
 USA,0.150427458,2389639,77.2,28.6,-77,38.9,0,0
 Saudi Arabia,0.126104699,2003256,77.2,28.6,46.6,24.7,-40,0
-"Pakistan	",0.107594983,1709217,77.2,28.6,73.1,33.4,0,0
+Pakistan ,0.107594983,1709217,77.2,28.6,73.1,33.4,0,0
 Oman,0.067743563,1076151,77.2,28.6,58.36,23.37,0,0
 "Kuwait	",0.066837525,1061758,77.2,28.6,48,29.3,0,0
 "United Kingdom	",0.050850273,807790,77.2,28.6,-0.1,51.4,-40,0
