@@ -1,0 +1,1327 @@
+<!DOCTYPE HTML >
+<html lang="en">
+<head>
+	<script src="http://d3js.org/d3.v4.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+	<script
+	src="https://code.jquery.com/jquery-3.6.0.js"
+	integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+	crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/d3-arrow@0.0.25/dist/d3-arrow.min.js"></script>
+
+<style>
+	table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+td:hover {background-color: #AE0000;}
+
+	.china_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.india_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.mexico_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.russia_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.syria_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.bangladesh_route {
+		fill: none;
+		opacity: 0;
+	}
+
+	.ukraine_route {
+		fill: none;
+		opacity: 0;
+	}
+/*	.Country { fill:#59FF00;}*/
+	
+	svg { background: #43a2ca; }
+
+	.source-port {
+		fill: white; 
+		stroke: darkgreen; 
+		stroke-width: 2px;
+	}
+
+</style>
+</head>
+<body>
+	<table>
+			<tr>
+				<td><button id="button_2020">2020</button></td>
+				<td><button id ="button_2015">2015</button></td>
+				<td><button id = "button_2010">2010</button></td>
+				<td><button id = "button_2005">2005</button></td>
+				<td><button id="button_2000">2000</button></td>
+				<td><button id="button_1995">1995</button></td>
+				<td><button id="button_1990">1990</button></td>
+			</tr>
+			<tr>
+				<td><button id="clean_2020">Clean</button></td>
+				<td><button id ="clean_2015">Clean</button></td>
+				<td><button id = "clean_2010">Clean</button></td>
+				<td><button id = "clean_2005">Clean</button></td>
+				<td><button id="clean_2000">Clean</button></td>
+				<td><button id="clean_1995">Clean</button></td>
+				<td><button id="clean_1990">Clean</button></td>
+			</tr>
+	</table>
+
+	<div id="map"> </div>
+	<script>
+		//jquery part
+		$(document).ready(function(){
+			//big rectangle listener
+			$('#button_2020').click(function(){
+				show_2020(0,107);
+			});
+
+			//small rectangle listener
+			$('#button_2015').click(function(){
+				show_2015(0,91);
+			});
+
+			//fill small rectangle listener
+			$('#button_2010').click(function(){
+				show_2010(0,79);
+			});
+
+			$('#button_2005').click(function(){
+				show_2005(0,63);
+			});
+
+			$('#button_2000').click(function(){
+				show_2000(0,56);
+			});
+
+			$('#button_1995').click(function(){
+				show_1995(0,52);
+			});
+
+			$('#button_1990').click(function(){
+				show_1990(0,45);
+			});
+
+			$('#clean_2020').click(function(){
+				clean_2020();
+			});
+
+			$('#clean_2015').click(function(){
+				clean_2015();
+			});
+
+			$('#clean_2010').click(function(){
+				clean_2010();
+			});
+
+			$('#clean_2005').click(function(){
+				clean_2005();
+			});
+
+			$('#clean_2000').click(function(){
+				clean_2000();
+			});
+
+			$('#clean_1995').click(function(){
+				clean_1995();
+			});
+
+			$('#clean_1990').click(function(){
+				clean_1990();
+			});
+		});
+
+function clean_2020(country){
+	g1.selectAll(".china_route").remove();
+	g2.selectAll(".label_china").remove();
+	g1.selectAll(".ports_china").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_2015(country){
+	g1.selectAll(".india_route").remove();
+	g2.selectAll(".label_india").remove();
+	g1.selectAll(".ports_india").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_2010(country){
+	g1.selectAll(".mexico_route").remove();
+	g2.selectAll(".label_mexico").remove();
+	g1.selectAll(".ports_mexico").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_2005(country){
+	g1.selectAll(".russia_route").remove();
+	g2.selectAll(".label_russia").remove();
+	g1.selectAll(".ports_russia").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_2000(country){
+	g1.selectAll(".syria_route").remove();
+	g2.selectAll(".label_syria").remove();
+	g1.selectAll(".ports_syria").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_1995(country){
+	g1.selectAll(".bangladesh_route").remove();
+	g2.selectAll(".label_bangladesh").remove();
+	g1.selectAll(".ports_bangladesh").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function clean_1990(country){
+	g1.selectAll(".ukraine_route").remove();
+	g2.selectAll(".label_ukraine").remove();
+	g1.selectAll(".ports_ukraine").remove();
+	g1.selectAll(".ports_origin").remove();
+}
+
+function show_2020(num1,num2){
+	d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/2020.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+		var india = routes.slice(15,32);
+		var mexico = routes.slice(33,34);
+		var russia = routes.slice(35,46);
+		var syria = routes.slice(47,55);
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		//append china path
+		routePath = g1.selectAll(".china_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr("class","china_route")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		// //append china text
+		// portLabels = g2.selectAll(".label_china")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_china")
+		// 	.style("font-size", "10px")
+		//append china circles
+		portMarkers = g1.selectAll(".ports_china")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_china")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+						.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+			originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+
+
+
+		}
+
+function show_2015(num1,num2){
+	d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/2015.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		//append india path
+		routePath = g1.selectAll(".india_route")
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","india_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		//append india text
+		// portLabels = g2.selectAll(".label_india")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff  
+		// 	} )
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_india")
+		// 	.style("font-size", "10px")
+		//append india circles
+		portMarkers = g1.selectAll(".ports_india")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_india")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+function show_2010(num1,num2){
+	d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/2010.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+
+		routePath = g1.selectAll(".mexico_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","mexico_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		// portLabels = g2.selectAll(".label_mexico")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_mexico")
+		// 	.style("font-size", "10px")
+
+		portMarkers = g1.selectAll(".ports_mexico")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_mexico")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+
+function show_2005(num1,num2){
+		d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/2005.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		//append china path
+		routePath = g1.selectAll(".russia_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","russia_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		// portLabels = g2.selectAll(".label_russia")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_russia")
+		// 	.style("font-size", "10px")
+		//append china circles
+		portMarkers = g1.selectAll(".ports_russia")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_russia")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+
+function show_2000(num1,num2){
+		d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/2000.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		routePath = g1.selectAll(".syria_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","syria_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+
+		// portLabels = g2.selectAll(".label_syria")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_syria")
+		// 	.style("font-size", "10px")
+		//append china circles
+		portMarkers = g1.selectAll(".ports_syria")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_syria")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+
+function show_1995(num1,num2){
+		d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/1995.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		routePath = g1.selectAll(".bangladesh_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","bangladesh_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		//append text
+		// portLabels = g2.selectAll(".label_bangladesh")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_bangladesh")
+		// 	.style("font-size", "5px")
+		//append circles
+		portMarkers = g1.selectAll(".ports_bangladesh")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_bangladesh")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+
+function show_1990(num1,num2){
+		d3.csv("https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/1990.csv", function (error, routes) {
+		var data = routes.slice(num1,num2);
+
+
+		var maxVolume = d3.max(routes, function(d) { return d.vol; });
+		routePath = g1.selectAll(".ukraine_route")//.route
+			.data(data)
+			.enter()
+			.append("path")
+			.attr("class","ukraine_route")
+			.attr("marker-end", "url(#my-arrow)")
+			.attr('d', function(d) {
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return path ({ 
+				type:"LineString",
+				coordinates: [ location,dest ],
+				});
+			})
+			.style("stroke-width", function(d) { 
+				return (d.people/500000);
+			})
+			.style("stroke",function(d) { 
+				if (d.male>d.female){
+					return "#2828FF";
+				}
+				else{
+					return "#FF5151";
+				}
+			})
+			.transition().duration(500)
+			.style("opacity",function(d) { 
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		//append text
+		// portLabels = g2.selectAll(".label_ukraine")
+		// 	.data(data)
+		// 	.enter()
+		// 	.append("text")
+		// 	.attr("x", function(d) { 
+		// 		var long = parseFloat(d.long);
+		// 		var lat = parseFloat(d.lat);
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var longoff=parseFloat(d.longoff);
+		// 		var location=[long,lat];
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[0] + longoff 
+		// 	})
+		// 	.attr("y", function(d) { 
+		// 		var destlong = parseFloat(d.longdest);
+		// 		var destlat = parseFloat(d.latdest);
+		// 		var latoff=parseFloat(d.latoff);
+		// 		var dest=[destlong,destlat];
+		// 		return projection(dest)[1] - latoff
+		// 	} )
+		// 	.text(function(d) { return d.destination })
+		// 	.attr("class","label_ukraine")
+		// 	.style("font-size", "10px")
+		//append circles
+		portMarkers = g1.selectAll(".ports_ukraine")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_ukraine")
+			.attr("cx", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			} )
+			.attr("cy", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke","#0000E3")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+		originMarkers = g1.selectAll(".ports_origin")
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class","ports_origin")
+			.attr("cx", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[0]
+			} )
+			.attr("cy", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var origin=[long,lat];
+				return projection(origin)[1]
+			 } )
+			.attr("r", function(d) { return (d.people/500000) })
+			.style("fill","none")
+			.style("stroke-width",1)
+			.style("stroke",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"){
+					return "#467500";
+				}
+				else{
+					return "#28004D";
+				}
+			 })
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 0.5;
+				}
+				else{
+					return 0;
+				}
+			});
+	});
+		}
+//d3.js part
+var width = 950; var height = 650;
+var projection = d3.geoKavrayskiy7()
+	.scale(180)
+	.rotate([-150,0])
+	.translate([width/2,height/2])
+	.precision(0.1);
+var path = d3.geoPath().projection(projection);
+var svg = d3.select("#map").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+var zoom = d3.zoom()
+	.scaleExtent([1,8])
+	.on("zoom", zoomed);
+
+var arrow = d3.arrow5()
+	.id("my-arrow")
+	.attr("class","arrows")
+	.attr("fill", "none")
+	.attr("stroke", "black");
+
+svg.call(zoom);
+svg.call(arrow);
+
+function zoomed() {
+	svg
+	.selectAll('path') // To prevent stroke width from scaling
+	.style('opacity',0.7)
+	.attr('transform', d3.event.transform);
+
+	svg
+	.selectAll('text') // To prevent text from scaling
+	.style('opacity',0.7)
+	.attr('transform', d3.event.transform);
+
+	svg
+	.selectAll('circle') // To prevent circle from scaling
+	.style('opacity',0.7)
+	.attr('transform', d3.event.transform);
+
+	svg
+	.selectAll('arrow') // To prevent arrow from scaling
+	.attr('transform', d3.event.transform);
+
+	}
+
+
+// Create a few groups to layer elements correctly
+var g1 = svg.append("g");  
+var g2 = svg.append("g");
+var colorScale = d3.scaleThreshold()
+//區分人均gdp等級 
+	.domain([1000, 4000, 8000, 12000, 30000])
+	.range(d3.schemeGreens[6]); 
+var gdpdata = d3.map();
+var q = d3.queue();
+q.defer(d3.json, "https://raw.githubusercontent.com/OhBlockByJames/InternationalMigrant_D3.js/main/map.geojson");
+q.defer(d3.csv, "https://raw.githubusercontent.com/OhBlockByJames/InternationalMigrant_D3.js/main/gdp.csv"
+, function(d) { gdpdata.set(d.code,+d.gdp );});
+q.await(ondraw);
+
+function ondraw(error,dataGeo,data){
+	g1.append("g")
+	.selectAll("path")
+		.data(dataGeo.features)
+		.enter().append("path")
+		.attr("d", d3.geoPath()
+		.projection(projection))
+		.style("stroke", "black")
+		.style("stroke-width", function(d){
+			console.log(d)
+			if( d.properties.name =="West Bank"||d.properties.name =="Jordan"||d.properties.name =="Kuwait"
+				||d.properties.name =="United Arab Emirates"||d.properties.name =="Israel"
+				||d.properties.name =="Lebanon"||d.properties.name =="Qatar"
+				||d.properties.name =="Estonia"||d.properties.name =="Haiti"
+				){
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		})
+		.attr("fill", function (d) {
+		d.total = gdpdata.get(d.id) || 0;
+		//兩個有一個是true 即回傳true
+		return colorScale(d.total);
+		})
+		.attr("class", function(d){ return "Country" } )
+		.style("opacity", 0.7)
+		.on("mouseover", mouseOver )
+		.on("mouseleave", mouseLeave )
+		.on("click", Click )
+}
+
+//tooltip
+	var tooltip = d3.select("#map")
+		.append("div")
+		.style("opacity", 0)
+		.attr("class", "tooltip")
+		.style("background-color", "white")
+		.style("border", "solid")
+		.style("border-width", "2px")
+		.style("border-radius", "5px")
+		.style("padding", "5px")
+
+let Click = function(d) {
+	console.log(d.properties.name);
+	d3.select(this)
+		.style("opacity", 0.7)
+		// .style("stroke", "blue")
+		// .style("stroke-width", 2)
+	tooltip
+		.style("left", (d3.mouse(this)[0]+70) + "px")
+		.style("top", (d3.mouse(this)[1]) + "px")
+		.html("Country Name: "+d.properties.name)
+		.style("opacity", 1)
+}
+//mouse on map
+let mouseOver = function(d) {
+	d3.selectAll(".Country")
+		.transition()
+		.duration(500)
+		.style("opacity", 0.3)
+		// .style("stroke", "black")
+		// .style("stroke-width", 0)//1
+	d3.select(this)
+		.transition()
+		.duration(500)
+		.style("opacity", 0.7)
+		// .style("stroke", "red")
+		// .style("stroke-width", 0)//2
+	tooltip
+		.style("left", (d3.mouse(this)[0]+70) + "px")
+		.style("top", (d3.mouse(this)[1]) + "px")
+		.html("Country Name: "+d.properties.name)
+		.style("opacity", 1)
+}
+
+let mouseLeave = function(d) {
+	d3.selectAll(".Country")
+		.transition()
+		.duration(500)
+		.style("opacity", 0.7)
+		// .style("stroke", "black")
+		// .style("stroke-width", 0)//1
+	tooltip
+		.style("left", (d3.mouse(this)[0]+70) + "px")
+		.style("top", (d3.mouse(this)[1]) + "px")
+		.style("opacity", 0)
+}
+
+	</script>
+</body>
+</html>
