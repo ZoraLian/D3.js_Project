@@ -75,15 +75,7 @@ td:hover {background-color: #AE0000;}
 				<td><button id="button_2000">2000</button></td>
 				<td><button id="button_1995">1995</button></td>
 				<td><button id="button_1990">1990</button></td>
-			</tr>
-			<tr>
-				<td><button id="clean_2020">Clean</button></td>
-				<td><button id ="clean_2015">Clean</button></td>
-				<td><button id = "clean_2010">Clean</button></td>
-				<td><button id = "clean_2005">Clean</button></td>
-				<td><button id="clean_2000">Clean</button></td>
-				<td><button id="clean_1995">Clean</button></td>
-				<td><button id="clean_1990">Clean</button></td>
+				<td><button id="clean">Clean</button></td>
 			</tr>
 	</table>
 
@@ -122,82 +114,44 @@ td:hover {background-color: #AE0000;}
 				show_1990(0,45);
 			});
 
-			$('#clean_2020').click(function(){
-				clean_2020();
-			});
-
-			$('#clean_2015').click(function(){
-				clean_2015();
-			});
-
-			$('#clean_2010').click(function(){
-				clean_2010();
-			});
-
-			$('#clean_2005').click(function(){
-				clean_2005();
-			});
-
-			$('#clean_2000').click(function(){
-				clean_2000();
-			});
-
-			$('#clean_1995').click(function(){
-				clean_1995();
-			});
-
-			$('#clean_1990').click(function(){
-				clean_1990();
+			$('#clean').click(function(){
+				clean();
 			});
 		});
 
-function clean_2020(country){
-	g1.selectAll(".china_route").remove();
+function clean(country){
+	g2.selectAll(".china_route").remove();
 	g2.selectAll(".label_china").remove();
 	g1.selectAll(".ports_china").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_2015(country){
-	g1.selectAll(".india_route").remove();
+	g1.selectAll(".ports_origin").remove();
+	g2.selectAll(".label_origin").remove();
+
+	g2.selectAll(".india_route").remove();
 	g2.selectAll(".label_india").remove();
 	g1.selectAll(".ports_india").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_2010(country){
-	g1.selectAll(".mexico_route").remove();
+	g2.selectAll(".mexico_route").remove();
 	g2.selectAll(".label_mexico").remove();
 	g1.selectAll(".ports_mexico").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_2005(country){
-	g1.selectAll(".russia_route").remove();
+	g2.selectAll(".russia_route").remove();
 	g2.selectAll(".label_russia").remove();
 	g1.selectAll(".ports_russia").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_2000(country){
-	g1.selectAll(".syria_route").remove();
+
+	g2.selectAll(".syria_route").remove();
 	g2.selectAll(".label_syria").remove();
 	g1.selectAll(".ports_syria").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_1995(country){
-	g1.selectAll(".bangladesh_route").remove();
+	g2.selectAll(".bangladesh_route").remove();
 	g2.selectAll(".label_bangladesh").remove();
 	g1.selectAll(".ports_bangladesh").remove();
-	g1.selectAll(".ports_origin").remove();
-}
 
-function clean_1990(country){
-	g1.selectAll(".ukraine_route").remove();
+	g2.selectAll(".ukraine_route").remove();
 	g2.selectAll(".label_ukraine").remove();
 	g1.selectAll(".ports_ukraine").remove();
-	g1.selectAll(".ports_origin").remove();
+
 }
 
 function show_2020(num1,num2){
@@ -209,7 +163,7 @@ function show_2020(num1,num2){
 		var syria = routes.slice(47,55);
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
 		//append china path
-		routePath = g1.selectAll(".china_route")//.route
+		routePath = g2.selectAll(".china_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -241,38 +195,60 @@ function show_2020(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 
-		// //append china text
-		// portLabels = g2.selectAll(".label_china")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_china")
-		// 	.style("font-size", "10px")
+		//append china text
+		portLabels = g2.selectAll(".label_china")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0] 
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_china")
+			.style("font-size", "2px")
+			.style("opacity",0);
+
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append china circles
 		portMarkers = g1.selectAll(".ports_china")
 			.data(data)
@@ -291,20 +267,27 @@ function show_2020(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
-						.style("opacity",function(d) {
+			.style("stroke","#000000")
+			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 
-			originMarkers = g1.selectAll(".ports_origin")
+		originMarkers = g1.selectAll(".ports_origin")
 			.data(data)
 			.enter()
 			.append("circle")
@@ -321,29 +304,44 @@ function show_2020(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"||d.origin=="Syria"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
-
-
-
 		}
 
 function show_2015(num1,num2){
@@ -351,7 +349,7 @@ function show_2015(num1,num2){
 		var data = routes.slice(num1,num2);
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
 		//append india path
-		routePath = g1.selectAll(".india_route")
+		routePath = g2.selectAll(".india_route")
 			.data(data)
 			.enter()
 			.append("path")
@@ -383,37 +381,59 @@ function show_2015(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 		//append india text
-		// portLabels = g2.selectAll(".label_india")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff  
-		// 	} )
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_india")
-		// 	.style("font-size", "10px")
+		portLabels = g2.selectAll(".label_india")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0]  
+			} )
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1] 
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_india")
+			.style("font-size", "2px")
+			.style("opacity",0);
+
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append india circles
 		portMarkers = g1.selectAll(".ports_india")
 			.data(data)
@@ -432,16 +452,23 @@ function show_2015(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			} )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
+			.style("stroke","#000000")
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 		originMarkers = g1.selectAll(".ports_origin")
@@ -461,25 +488,43 @@ function show_2015(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"||d.origin=="Bangladesh"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 function show_2010(num1,num2){
@@ -488,7 +533,7 @@ function show_2010(num1,num2){
 
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
 
-		routePath = g1.selectAll(".mexico_route")//.route
+		routePath = g2.selectAll(".mexico_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -520,38 +565,59 @@ function show_2010(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 
-		// portLabels = g2.selectAll(".label_mexico")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_mexico")
-		// 	.style("font-size", "10px")
+		portLabels = g2.selectAll(".label_mexico")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0] 
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_mexico")
+			.style("font-size", "2px")
+			.style("opacity",0);
 
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		portMarkers = g1.selectAll(".ports_mexico")
 			.data(data)
 			.enter()
@@ -569,16 +635,23 @@ function show_2010(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
+			.style("stroke","#000000")
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 
@@ -599,25 +672,43 @@ function show_2010(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"||d.origin=="Bangladesh"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 
@@ -627,7 +718,7 @@ function show_2005(num1,num2){
 
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
 		//append china path
-		routePath = g1.selectAll(".russia_route")//.route
+		routePath = g2.selectAll(".russia_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -659,37 +750,58 @@ function show_2005(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 
-		// portLabels = g2.selectAll(".label_russia")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_russia")
-		// 	.style("font-size", "10px")
+		portLabels = g2.selectAll(".label_russia")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_russia")
+			.style("font-size", "2px")
+			.style("opacity",0);
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append china circles
 		portMarkers = g1.selectAll(".ports_russia")
 			.data(data)
@@ -708,16 +820,23 @@ function show_2005(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
+			.style("stroke","#000000")
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 
@@ -738,25 +857,43 @@ function show_2005(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"||d.origin=="Ukraine"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 
@@ -765,7 +902,7 @@ function show_2000(num1,num2){
 		var data = routes.slice(num1,num2);
 
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
-		routePath = g1.selectAll(".syria_route")//.route
+		routePath = g2.selectAll(".syria_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -797,37 +934,59 @@ function show_2000(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 
-		// portLabels = g2.selectAll(".label_syria")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_syria")
-		// 	.style("font-size", "10px")
+		portLabels = g2.selectAll(".label_syria")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0] 
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_syria")
+			.style("font-size", "2px")
+			.style("opacity",0);
+
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append china circles
 		portMarkers = g1.selectAll(".ports_syria")
 			.data(data)
@@ -846,18 +1005,26 @@ function show_2000(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke","#0000E3")
-			style("opacity",function(d) {
-				if (d.people>1000000){
-					return 0.5;
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
 				}
-				else{
+				else {
 					return 0;
 				}
+			 })
+			.style("fill","black")
+			.style("stroke-width",1)
+			.style("stroke","#000000")
+			.style("opacity",function(d) {
+				if (d.people>1000000){
+					return 1;
+				}
+				else{
+					return 0.5;
+				}
 			});
+
 		originMarkers = g1.selectAll(".ports_origin")
 			.data(data)
 			.enter()
@@ -875,25 +1042,43 @@ function show_2000(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="China"||d.origin=="Mexico"||d.origin=="Ukraine"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 
@@ -902,7 +1087,7 @@ function show_1995(num1,num2){
 		var data = routes.slice(num1,num2);
 
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
-		routePath = g1.selectAll(".bangladesh_route")//.route
+		routePath = g2.selectAll(".bangladesh_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -934,37 +1119,58 @@ function show_1995(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 		//append text
-		// portLabels = g2.selectAll(".label_bangladesh")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_bangladesh")
-		// 	.style("font-size", "5px")
+		portLabels = g2.selectAll(".label_bangladesh")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_bangladesh")
+			.style("font-size", "2px")
+			.style("opacity",0);
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append circles
 		portMarkers = g1.selectAll(".ports_bangladesh")
 			.data(data)
@@ -983,16 +1189,23 @@ function show_1995(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
+			.style("stroke","#000000")
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 		originMarkers = g1.selectAll(".ports_origin")
@@ -1012,25 +1225,43 @@ function show_1995(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="Bangladesh"||d.origin=="Mexico"||d.origin=="Ukraine"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 
@@ -1040,7 +1271,7 @@ function show_1990(num1,num2){
 
 
 		var maxVolume = d3.max(routes, function(d) { return d.vol; });
-		routePath = g1.selectAll(".ukraine_route")//.route
+		routePath = g2.selectAll(".ukraine_route")//.route
 			.data(data)
 			.enter()
 			.append("path")
@@ -1072,37 +1303,59 @@ function show_1990(num1,num2){
 			.transition().duration(500)
 			.style("opacity",function(d) { 
 				if (d.people>1000000){
-					return 0.5;
+					return 0.6;
 				}
 				else{
-					return 0;
+					return 0.1;
 				}
 			});
 		//append text
-		// portLabels = g2.selectAll(".label_ukraine")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", function(d) { 
-		// 		var long = parseFloat(d.long);
-		// 		var lat = parseFloat(d.lat);
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var longoff=parseFloat(d.longoff);
-		// 		var location=[long,lat];
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[0] + longoff 
-		// 	})
-		// 	.attr("y", function(d) { 
-		// 		var destlong = parseFloat(d.longdest);
-		// 		var destlat = parseFloat(d.latdest);
-		// 		var latoff=parseFloat(d.latoff);
-		// 		var dest=[destlong,destlat];
-		// 		return projection(dest)[1] - latoff
-		// 	} )
-		// 	.text(function(d) { return d.destination })
-		// 	.attr("class","label_ukraine")
-		// 	.style("font-size", "10px")
+		portLabels = g2.selectAll(".label_ukraine")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var longoff=parseFloat(d.longoff);
+				var location=[long,lat];
+				var dest=[destlong,destlat];
+				return projection(dest)[0]
+			})
+			.attr("y", function(d) { 
+				var destlong = parseFloat(d.longdest);
+				var destlat = parseFloat(d.latdest);
+				var latoff=parseFloat(d.latoff);
+				var dest=[destlong,destlat];
+				return projection(dest)[1]
+			} )
+			.text(function(d) { return d.destination })
+			.attr("class","label_ukraine")
+			.style("font-size", "2px")
+			.style("opacity",0);
+
+		portLabels = g2.selectAll(".label_origin")
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[0] 
+			})
+			.attr("y", function(d) { 
+				var long = parseFloat(d.long);
+				var lat = parseFloat(d.lat);
+				var location=[long,lat];
+				return projection(location)[1]
+			} )
+			.text(function(d) { return d.origin })
+			.attr("class","label_origin")
+			.style("font-size", "2px")
+			.style("opacity",0);
 		//append circles
 		portMarkers = g1.selectAll(".ports_ukraine")
 			.data(data)
@@ -1121,16 +1374,23 @@ function show_1990(num1,num2){
 				var dest=[destlong,destlat];
 				return projection(dest)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
+			.attr("r", function(d) { 
+				if (d.people>500000){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			 })
+			.style("fill","black")
 			.style("stroke-width",1)
-			.style("stroke","#0000E3")
+			.style("stroke","#000000")
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
 			});
 		originMarkers = g1.selectAll(".ports_origin")
@@ -1150,31 +1410,49 @@ function show_1990(num1,num2){
 				var origin=[long,lat];
 				return projection(origin)[1]
 			 } )
-			.attr("r", function(d) { return (d.people/500000) })
-			.style("fill","none")
-			.style("stroke-width",1)
-			.style("stroke",function(d) { 
-				if(d.origin=="China"||d.origin=="Mexico"){
-					return "#467500";
+			.attr("r", function(d) { 
+				if (d.people>8000000){
+					return 10;
 				}
-				else{
-					return "#28004D";
+				else if (d.people>4000000&&d.people<8000000){
+					return 8;
+				}
+				else if (d.people>2000000&&d.people<4000000){
+					return 6;
+				}
+				else if (d.people>1000000&&d.people<2000000){
+					return 4;
+				}
+				else if (d.people>500000&&d.people<1000000){
+					return 2;
+				}
+				else {
+					return 0;
 				}
 			 })
 			.style("opacity",function(d) {
 				if (d.people>1000000){
-					return 0.5;
+					return 1;
 				}
 				else{
-					return 0;
+					return 0.5;
 				}
-			});
+			})
+			.style("fill",function(d) { 
+				if(d.origin=="Bangladesh"||d.origin=="Afghanistan"||d.origin=="Ukraine"||d.origin=="Russia"||
+					d.origin=="India"){
+					return "#FF8000";
+				}
+				else{
+					return "#FFD306";
+				}
+			 })
 	});
 		}
 //d3.js part
-var width = 950; var height = 650;
+var width = 1000; var height = 500;//950*650
 var projection = d3.geoKavrayskiy7()
-	.scale(180)
+	.scale(160)//180
 	.rotate([-150,0])
 	.translate([width/2,height/2])
 	.precision(0.1);
@@ -1183,7 +1461,7 @@ var svg = d3.select("#map").append("svg")
 	.attr("width", width)
 	.attr("height", height);
 var zoom = d3.zoom()
-	.scaleExtent([1,8])
+	.scaleExtent([1,10])
 	.on("zoom", zoomed);
 
 var arrow = d3.arrow5()
@@ -1196,25 +1474,21 @@ svg.call(zoom);
 svg.call(arrow);
 
 function zoomed() {
+	svg.call(arrow);
 	svg
 	.selectAll('path') // To prevent stroke width from scaling
-	.style('opacity',0.7)
+	.style('opacity',0.5)
 	.attr('transform', d3.event.transform);
 
 	svg
 	.selectAll('text') // To prevent text from scaling
-	.style('opacity',0.7)
+	.style('opacity',1)
 	.attr('transform', d3.event.transform);
 
 	svg
 	.selectAll('circle') // To prevent circle from scaling
-	.style('opacity',0.7)
+	.style('opacity',0.3)
 	.attr('transform', d3.event.transform);
-
-	svg
-	.selectAll('arrow') // To prevent arrow from scaling
-	.attr('transform', d3.event.transform);
-
 	}
 
 
@@ -1228,11 +1502,45 @@ var colorScale = d3.scaleThreshold()
 var gdpdata = d3.map();
 var q = d3.queue();
 q.defer(d3.json, "https://raw.githubusercontent.com/OhBlockByJames/InternationalMigrant_D3.js/main/map.geojson");
-q.defer(d3.csv, "https://raw.githubusercontent.com/OhBlockByJames/InternationalMigrant_D3.js/main/gdp.csv"
+q.defer(d3.csv, "https://raw.githubusercontent.com/OhBlockByJames/D3.js_Project/main/gdp.csv"
 , function(d) { gdpdata.set(d.code,+d.gdp );});
 q.await(ondraw);
 
 function ondraw(error,dataGeo,data){
+//legend
+var valuesToShow = [10]
+svg
+	.selectAll("legend")
+	.data(valuesToShow)
+	.enter()
+	.append("circle")
+	.attr("cx", 900 )
+	.attr("cy", 450 )
+	.attr("r", function(d){ return d;})
+	.style("fill", "#FF8000")
+	.attr("stroke", "none");
+svg
+	.selectAll("legend")
+	.data(valuesToShow)
+	.enter()
+	.append("circle")
+	.attr("cx", 950 )
+	.attr("cy", 450 )
+	.attr("r", function(d){ return d;})
+	.style("fill", "#FFD306")
+	.attr("stroke", "none");
+svg.append("text")
+	.attr('x', 920)
+	.attr("y", 480)
+	.text("左方:移出人數前五名 右方:其他國家")
+	.attr("text-anchor", "middle")
+	.style("font", "10px times")
+svg.append("text")
+	.attr('x', 882)
+	.attr("y", 490)
+	.text("黑點:移民移入國家")
+	.attr("text-anchor", "middle")
+	.style("font", "10px times")
 	g1.append("g")
 	.selectAll("path")
 		.data(dataGeo.features)
@@ -1243,11 +1551,11 @@ function ondraw(error,dataGeo,data){
 		.style("stroke-width", function(d){
 			console.log(d)
 			if( d.properties.name =="West Bank"||d.properties.name =="Jordan"||d.properties.name =="Kuwait"
-				||d.properties.name =="United Arab Emirates"||d.properties.name =="Israel"
+				||d.properties.name =="United Arab Emirates"
 				||d.properties.name =="Lebanon"||d.properties.name =="Qatar"
 				||d.properties.name =="Estonia"||d.properties.name =="Haiti"
 				){
-				return 1;
+				return 0.3;
 			}
 			else{
 				return 0;
@@ -1268,13 +1576,15 @@ function ondraw(error,dataGeo,data){
 //tooltip
 	var tooltip = d3.select("#map")
 		.append("div")
-		.style("opacity", 0)
+		.style("opacity", 1)
 		.attr("class", "tooltip")
 		.style("background-color", "white")
 		.style("border", "solid")
 		.style("border-width", "2px")
 		.style("border-radius", "5px")
 		.style("padding", "5px")
+
+
 
 let Click = function(d) {
 	console.log(d.properties.name);
