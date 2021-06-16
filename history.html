@@ -182,7 +182,7 @@ function show_2020(num1,num2){
 				});
 			})
 			.style("stroke-width", function(d) { 
-				return (d.people/500000);
+				return (d.people/400000);
 			})
 			.style("stroke",function(d) { 
 				if (d.male>d.female){
@@ -1474,10 +1474,14 @@ svg.call(zoom);
 svg.call(arrow);
 
 function zoomed() {
-	svg.call(arrow);
 	svg
 	.selectAll('path') // To prevent stroke width from scaling
 	.style('opacity',0.5)
+	.attr('transform', d3.event.transform);
+
+	svg
+	.selectAll('rect') // To prevent stroke width from scaling
+	.style('opacity',1)
 	.attr('transform', d3.event.transform);
 
 	svg
@@ -1488,6 +1492,11 @@ function zoomed() {
 	svg
 	.selectAll('circle') // To prevent circle from scaling
 	.style('opacity',0.3)
+	.attr('transform', d3.event.transform);
+
+	svg
+	.selectAll('.legends') // To prevent circle from scaling
+	.style('opacity',1)
 	.attr('transform', d3.event.transform);
 	}
 
@@ -1514,6 +1523,7 @@ svg
 	.data(valuesToShow)
 	.enter()
 	.append("circle")
+	.attr("class","legends")
 	.attr("cx", 900 )
 	.attr("cy", 450 )
 	.attr("r", function(d){ return d;})
@@ -1524,6 +1534,7 @@ svg
 	.data(valuesToShow)
 	.enter()
 	.append("circle")
+	.attr("class","legends")
 	.attr("cx", 950 )
 	.attr("cy", 450 )
 	.attr("r", function(d){ return d;})
@@ -1532,7 +1543,7 @@ svg
 svg.append("text")
 	.attr('x', 920)
 	.attr("y", 480)
-	.text("左方:移出人數前五名 右方:其他國家")
+	.text("橘點:移出人數前五名 黃點:其他國家")
 	.attr("text-anchor", "middle")
 	.style("font", "10px times")
 svg.append("text")
@@ -1541,7 +1552,30 @@ svg.append("text")
 	.text("黑點:移民移入國家")
 	.attr("text-anchor", "middle")
 	.style("font", "10px times")
-	g1.append("g")
+svg
+	.append('rect')
+	.attr('x', 920)
+	.attr('y', 390)
+	.attr('height', 2)
+	.attr('width', 40)
+	.style("fill", "#2828FF")
+svg
+	.append('rect')
+	.attr('x', 920)
+	.attr('y', 380)
+	.attr('height', 2)
+	.attr('width', 40)
+	.style("fill", "#FF5151")
+svg.append("text")
+	.attr('x', 840)
+	.attr("y", 410)
+	.text("一百萬人移民 藍線:男多 紅線:女多")
+	.attr("text-anchor", "left")
+	.style("font", "10px times")
+
+
+
+g1.append("g")
 	.selectAll("path")
 		.data(dataGeo.features)
 		.enter().append("path")
